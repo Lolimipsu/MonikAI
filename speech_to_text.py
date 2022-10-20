@@ -1,6 +1,7 @@
 from multiprocessing.connection import Listener
 import speech_recognition as sr
 
+ai_name = ['hi', 'hey', 'monica', 'monika']
 
 listener = sr.Recognizer()
 try:
@@ -9,8 +10,10 @@ try:
         voice = listener.listen(source)
         command = listener.recognize_google(voice)
         command = command.lower()
-        if 'alexa' in command:
-            command = command.replace('alexa', '')
-            print(command)
+        if 'monica' or 'monika' or 'hey monika' or 'hey monica' in command:
+            for word in ai_name:
+                command = command.replace(word, "")
+    
+    print(command)
 except:
     pass
