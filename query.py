@@ -1,19 +1,19 @@
 from bs4 import BeautifulSoup
 import requests
-import text_to_speech
-import speech_to_text
+import definitions
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
 
 def query_search():
-    command = speech_to_text.take_query()
+    command = definitions.take_query()
+    print('step 3')
     #command = "weather today"
     if 'weather today' or 'weather like today' in command:
         #print("weather good.")
         get_w = get_weather()
-        text_to_speech.tts.say("This is today's weather forecast in")
-        text_to_speech.tts.say(get_w)
-        text_to_speech.tts.runAndWait()
+        definitions.tts.say("This is today's weather forecast in")
+        definitions.tts.say(get_w)
+        definitions.tts.runAndWait()
         return
 
 def get_weather():

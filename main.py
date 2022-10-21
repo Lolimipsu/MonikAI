@@ -1,6 +1,11 @@
-import text_to_speech
-import speech_to_text
+import definitions
 import query
 
-text_to_speech.greeting()
-query.query_search()
+def run_monikAI():
+    definitions.greeting()
+    query = definitions.take_query()
+    print(query)
+
+    if 'weather today' or 'weather like today' in query:
+        print('step 4 - in main')
+        query.get_weather()
