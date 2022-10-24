@@ -2,6 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 import requests
 import pywhatkit
+import webbrowser
 from bs4 import BeautifulSoup
 
 # -----------------------------------------------------------------------
@@ -43,8 +44,8 @@ def query_input():
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
             command = command.lower()
-            if 'alexa' in command:
-                command = command.replace('alexa','')
+            if 'monika' in command or 'monica' in command:
+                command = command.replace('monika','monica','')
                 print(command)
     except:
         pass
@@ -86,3 +87,14 @@ def play_music():
     print('playing ' + song)
     talk('playing ' + song)
     pywhatkit.playonyt(song)
+
+def open_site():
+    print('What would you like to do in browser?')
+    talk('What would you like to do in browser?')
+    command = query_input()
+    command = command.replace(" ", "")
+    if 'open' in command:
+        command = command.replace("open", "")
+    site = "https://" + command + ".com"
+    talk('Opening ' + command)
+    webbrowser.open(site)
