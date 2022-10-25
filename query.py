@@ -17,7 +17,11 @@ tts.setProperty('voice', voice[2].id)
 tts.setProperty('rate', 175)
 tts.setProperty('volume', 0.8)
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+headers = {
+    'Accept' : '*/*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
 
 
 # -----------------------------------------------------------------------
@@ -95,6 +99,14 @@ def open_site():
     command = command.replace(" ", "")
     if 'open' in command:
         command = command.replace("open", "")
-    site = "https://" + command + ".com"
+
+    search = command
+    url = 'https://www.google.com/search'
+    parameters = {'q': search}
+    content = requests.get(url, headers = headers, params = parameters).text
+    soup = BeautifulSoup(content, 'html.parser')
+    search = soup.find(id = 'search')
+    first_link = search.find('a')
+    print("Opening: " + first_link['href'])
     talk('Opening ' + command)
-    webbrowser.open(site)
+    webbrowser.open(first_link['href'])
