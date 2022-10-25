@@ -4,7 +4,7 @@ import requests
 import pywhatkit
 import webbrowser
 from bs4 import BeautifulSoup
-
+from ShazamAPI import Shazam
 # -----------------------------------------------------------------------
 # definitions
 ai_name = ['hi', 'hey', 'hello', 'monica', 'monika']
@@ -27,12 +27,12 @@ headers = {
 # -----------------------------------------------------------------------
 # text to speech
 def talk(text):
-    print('step 1 - talk')
+    print('< OUT: def talk')
     tts.say(text)
     tts.runAndWait()
 
 def greeting():
-    print('step 1 - greeting')
+    print('< OUT: greeting')
     tts.say("Hello, I'm Monika. Your Personal AI Companion.")
     tts.say("How can I help you Today?")
     tts.runAndWait()
@@ -43,14 +43,14 @@ def greeting():
 def query_input():
     try:
         with sr.Microphone() as source:
-            print('step 2 - query input')
+            print('> INPUT: query input')
             print('listening...')
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
             command = command.lower()
             if 'monika' in command or 'monica' in command:
                 command = command.replace('monika','monica','')
-                print(command)
+                print('> INPUT:' + command)
     except:
         pass
     return command
@@ -58,7 +58,15 @@ def query_input():
 # queries
 
 def weather_today():
-    city = "Manila weather"
+    print('For which city?')
+    talk('For which city?')
+    command = query_input()
+    print('> INPUT:' + command + ' IN: weather_today')
+
+    talk("getting today's weather forecast.")
+    print("getting today's weather forecast...")
+
+    city = command + " weather"
     city = city.replace(" ", "+")
     res = requests.get(f'https://www.google.com/search?q={city}&oq={city}&aqs=chrome.0.35i39l2j0l4j46j69i60.6128j1j7&sourceid=chrome&ie=UTF-8', headers=headers)
     print("Searching...\n")
@@ -87,6 +95,7 @@ def play_music():
     print('What song would you like to play?')
     talk('What song would you like to play?')
     command = query_input()
+    print('> INPUT: ' + command + ' IN play_music')
     song = command.replace('play', '')
     print('playing ' + song)
     talk('playing ' + song)
@@ -96,9 +105,11 @@ def open_site():
     print('What would you like to do in browser?')
     talk('What would you like to do in browser?')
     command = query_input()
-    command = command.replace(" ", "")
-    if 'open' in command:
-        command = command.replace("open", "")
+    #command = command.replace(" ", "")
+    print('> INPUT: '+ command + ' IN open_site')
+    if 'open' in command or 'use' in command:
+        for word in ['open', 'use']:
+            command = command.replace(word, "")
 
     search = command
     url = 'https://www.google.com/search'
@@ -110,3 +121,15 @@ def open_site():
     print("Opening: " + first_link['href'])
     talk('Opening ' + command)
     webbrowser.open(first_link['href'])
+
+def find_song():
+    print('> OUT: listening...')
+    print('listening...')
+    #TODO add text here that says in the gui "listening..."
+    command = query_input()
+    mp3_file_content_to_recognize = open('a.mp3', 'rb').read()
+
+    shazam = Shazam(mp3_file_content_to_recognize)
+    recognize_generator = shazam.recognizeSong()
+    while True:
+        print(next(recognize_generator)) # current offset & shazam response to recognize requests
