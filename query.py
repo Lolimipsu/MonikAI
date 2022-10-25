@@ -1,3 +1,4 @@
+from asyncio import streams
 import speech_recognition as sr
 import pyttsx3
 import requests
@@ -5,6 +6,10 @@ import pywhatkit
 import webbrowser
 from bs4 import BeautifulSoup
 from ShazamAPI import Shazam
+import pyaudio
+import wave
+from pydub import AudioSegment
+from pathlib import Path
 # -----------------------------------------------------------------------
 # definitions
 ai_name = ['hi', 'hey', 'hello', 'monica', 'monika']
@@ -123,13 +128,50 @@ def open_site():
     webbrowser.open(first_link['href'])
 
 def find_song():
+    
+    #TODO add text here that says in the gui "listening..."
+    
+    #recording the audio
+    chunk = 1024
+    sample_format = pyaudio.paInt16
+    channels = 1
+    fs = 44100
+    seconds = 10
+    filename = "output.wav"
+
+    p = pyaudio.PyAudio()
     print('> OUT: listening...')
     print('listening...')
-    #TODO add text here that says in the gui "listening..."
-    command = query_input()
-    mp3_file_content_to_recognize = open('a.mp3', 'rb').read()
 
-    shazam = Shazam(mp3_file_content_to_recognize)
-    recognize_generator = shazam.recognizeSong()
-    while True:
-        print(next(recognize_generator)) # current offset & shazam response to recognize requests
+    stream = p.open(format=sample_format,
+                    channels=channels,
+                    rate=fs,
+                    frames_per_buffer=chunk,
+                    input=True)
+
+    frames = [] 
+
+    for i in range(0, int(fs / chunk * seconds)):
+        data = stream.read(chunk)
+        frames.append(data)
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+    print('> OUT: recording stopped. finding the song...')
+    print('finding the song...')
+
+    # Save the recorded data as a WAV file
+    wf = wave.open(filename, 'wb')
+    wf.setnchannels(channels)
+    wf.setsampwidth(p.get_sample_size(sample_format))
+    wf.setframerate(fs)
+    wf.writeframes(b''.join(frames))
+    wf.close()
+
+    # converting wav file to mp3 format
+    output_wav_file = Path(__file__).with_name('output.wav')
+    sound = AudioSegment.from_wav(output_wav_file)
+    sound.export('myfile.mp3', format='mp3')
+    # Finding song
