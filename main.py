@@ -19,7 +19,7 @@ def run_monikAI():
     elif 'open browser' in command:
         q.open_site()
 
-    elif 'what song is this' in command or 'find this song' in command:
+    elif 'what song is this' in command or 'find this song' in command or 'name of song' in command:
         q.find_song()
     
     else:

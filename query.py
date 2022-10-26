@@ -1,15 +1,18 @@
-from asyncio import streams
 import speech_recognition as sr
 import pyttsx3
 import requests
 import pywhatkit
 import webbrowser
 from bs4 import BeautifulSoup
+
+#finding song
 from ShazamAPI import Shazam
 import pyaudio
 import wave
 from pydub import AudioSegment
 from pathlib import Path
+import json
+
 # -----------------------------------------------------------------------
 # definitions
 ai_name = ['hi', 'hey', 'hello', 'monica', 'monika']
@@ -137,7 +140,7 @@ def find_song():
     channels = 1
     fs = 44100
     seconds = 10
-    filename = "output.wav"
+    filename = "find_this_song.mp3"
 
     p = pyaudio.PyAudio()
     print('> OUT: listening...')
@@ -171,7 +174,17 @@ def find_song():
     wf.close()
 
     # converting wav file to mp3 format
-    output_wav_file = Path(__file__).with_name('output.wav')
-    sound = AudioSegment.from_wav(output_wav_file)
-    sound.export('myfile.mp3', format='mp3')
+    # output_wav_file = Path(__file__).with_name('output.wav')
+    # sound = AudioSegment.from_wav(output_wav_file)
+    # sound.export('myfile.mp3', format='mp3')
+
     # Finding song
+    find_this_song = Path(__file__).with_name('find_this_song.mp3')
+    print(find_this_song)
+    mp3_song_to_recognize = open(find_this_song, 'rb').read()
+
+    shazam = Shazam(mp3_song_to_recognize)
+    recognize_generator = shazam.recognizeSong()
+    #y = json.dumps(recognize_generator)
+    while True:
+        print(next(recognize_generator)) # current offset & shazam response to recognize requests
