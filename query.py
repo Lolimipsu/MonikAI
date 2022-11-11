@@ -3,18 +3,18 @@ import pyttsx3
 import requests
 import pywhatkit
 import webbrowser
+import urllib.request
 from bs4 import BeautifulSoup
 
 ## finding song
 # shazam requirements
 import asyncio
-from shazamio import Shazam
+from shazamio import Shazam, Serialize
+
 
 # recording audio
 import pyaudio
 import wave
-#from pydub import AudioSegment
-from pathlib import Path
 
 # -----------------------------------------------------------------------
 # definitions
@@ -142,11 +142,11 @@ def find_song():
     sample_format = pyaudio.paInt16
     channels = 1
     fs = 44100
-    seconds = 13
+    seconds = 16
     filename = "find_this_song.mp3"
 
     p = pyaudio.PyAudio()
-    print('> OUT: listening...')
+    print('> OUT: listening to song...')
     print('listening...')
 
     stream = p.open(format=sample_format,
@@ -176,20 +176,42 @@ def find_song():
     wf.writeframes(b''.join(frames))
     wf.close()
 
-    # converting wav file to mp3 format
-    # output_wav_file = Path(__file__).with_name('output.wav')
-    # sound = AudioSegment.from_wav(output_wav_file)
-    # sound.export('myfile.mp3', format='mp3')
+    # jump to finding_the_song
+    finding_song()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(finding_song())
 
-    # Finding song
-    
+# Finding song
+async def finding_song():
+    shazam = Shazam()
+    out = await shazam.recognize_song('find_this_song.mp3')
+    # print(out)
+    result = Serialize.full_track(data=out)
+    youtube_data = await shazam.get_youtube_data(link=result.track.youtube_link)
+    serialized_youtube = Serialize.youtube(data=youtube_data)
+    # print(serialized_youtube.uri)
 
-    # find_this_song = Path(__file__).with_name('find_this_song.mp3')
-    # print(find_this_song)
-    # mp3_song_to_recognize = open(find_this_song, 'rb').read()
+    ## getting the metadata
+    youtube_link = serialized_youtube.uri
+    page = urllib.request.urlopen(youtube_link)
+    html = BeautifulSoup(page.read(), "html.parser")
 
-    # shazam = Shazam(mp3_song_to_recognize)
-    # recognize_generator = shazam.recognizeSong()
-    # #y = json.dumps(recognize_generator)
-    # while True:
-    #     print(next(recognize_generator)) # current offset & shazam response to recognize requests
+    song_title = html.title.string
+    song_title_final = song_title.replace("- YouTube", "")
+    print(song_title_final)
+    print('The song name is: ' + song_title_final + " on youtube")
+    talk('The song name is: ' + song_title_final + " on youtube")
+
+    print('Would you like me to play the song?')
+    talk('Would you like me to play the song?')
+
+    command = query_input()
+    #command = command.replace(" ", "")
+    print('> INPUT: '+ command + ' IN finding_song')
+    if 'yes' in command or 'yeah' in command or 'yep' in command or 'sure' in command:
+        print('Ok, playing ' + song_title_final)
+        talk('Ok, playing ' + song_title_final)
+        pywhatkit.playonyt(song_title_final)
+    elif 'no' in command or 'nah' in command or 'nope' in command:
+        print('Ok, let me know if you need anything.')
+        talk('Ok, let me know if you need anything.')
