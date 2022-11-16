@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 import asyncio
 from shazamio import Shazam, Serialize
 
+# translating the song to romanized version
+from googletrans import Translator
 
 # recording audio
 import pyaudio
@@ -185,11 +187,21 @@ def find_song():
 async def finding_song():
     shazam = Shazam()
     out = await shazam.recognize_song('find_this_song.mp3')
-    # print(out)
     result = Serialize.full_track(out)
     print(result.track.title)
     print(result.track.subtitle)
-    song_title_final = result.track.title + " by " + result.track.subtitle
+
+    translator = Translator()
+    translated_to_en = translator.translate(result.track.title,  dest='en', src='auto')
+    song_title_romanized = translated_to_en.pronunciation
+    print(translated_to_en.pronunciation)
+
+    # for the text to speech
+    song_title_final = song_title_romanized + " by " + result.track.subtitle
+
+    # for the query
+    song_title_final_query = result.track.title + " - " + result.track.subtitle
+
     print('The song name is: ' + song_title_final)
     talk('The song name is: ' + song_title_final)
 
@@ -202,7 +214,7 @@ async def finding_song():
     if 'yes' in command or 'yeah' in command or 'yep' in command or 'sure' in command:
         print('Ok, playing ' + song_title_final)
         talk('Ok, playing ' + song_title_final)
-        pywhatkit.playonyt(song_title_final)
+        pywhatkit.playonyt(song_title_final_query)
     elif 'no' in command or 'nah' in command or 'nope' in command:
         print('Ok, let me know if you need anything.')
         talk('Ok, let me know if you need anything.')
