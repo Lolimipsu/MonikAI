@@ -186,21 +186,12 @@ async def finding_song():
     shazam = Shazam()
     out = await shazam.recognize_song('find_this_song.mp3')
     # print(out)
-    result = Serialize.full_track(data=out)
-    youtube_data = await shazam.get_youtube_data(link=result.track.youtube_link)
-    serialized_youtube = Serialize.youtube(data=youtube_data)
-    # print(serialized_youtube.uri)
-
-    ## getting the metadata
-    youtube_link = serialized_youtube.uri
-    page = urllib.request.urlopen(youtube_link)
-    html = BeautifulSoup(page.read(), "html.parser")
-
-    song_title = html.title.string
-    song_title_final = song_title.replace("- YouTube", "")
-    print(song_title_final)
-    print('The song name is: ' + song_title_final + " on youtube")
-    talk('The song name is: ' + song_title_final + " on youtube")
+    result = Serialize.full_track(out)
+    print(result.track.title)
+    print(result.track.subtitle)
+    song_title_final = result.track.title + " by " + result.track.subtitle
+    print('The song name is: ' + song_title_final)
+    talk('The song name is: ' + song_title_final)
 
     print('Would you like me to play the song?')
     talk('Would you like me to play the song?')
