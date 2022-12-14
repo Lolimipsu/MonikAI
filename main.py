@@ -1,6 +1,6 @@
 import query as q
 
-q.greeting()
+# q.greeting()
 
 def run_monikAI():
     # TODO fix the one time greeting each open

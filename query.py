@@ -139,52 +139,53 @@ def find_song():
     
     #TODO add text here that says in the gui "listening..."
     
-    #recording the audio
-    chunk = 1024
-    sample_format = pyaudio.paInt16
-    channels = 1
-    fs = 44100
-    seconds = 16
-    filename = "find_this_song.mp3"
+    # #recording the audio
+    # chunk = 1024
+    # sample_format = pyaudio.paInt16
+    # channels = 1
+    # fs = 44100
+    # seconds = 16
+    # filename = "find_this_song.mp3"
 
-    p = pyaudio.PyAudio()
-    print('> OUT: listening to song...')
-    print('listening...')
+    # p = pyaudio.PyAudio()
+    # print('> OUT: listening to song...')
+    # print('listening...')
 
-    stream = p.open(format=sample_format,
-                    channels=channels,
-                    rate=fs,
-                    frames_per_buffer=chunk,
-                    input=True)
+    # stream = p.open(format=sample_format,
+    #                 channels=channels,
+    #                 rate=fs,
+    #                 frames_per_buffer=chunk,
+    #                 input=True)
 
-    frames = [] 
+    # frames = [] 
 
-    for i in range(0, int(fs / chunk * seconds)):
-        data = stream.read(chunk)
-        frames.append(data)
+    # for i in range(0, int(fs / chunk * seconds)):
+    #     data = stream.read(chunk)
+    #     frames.append(data)
 
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+    # stream.stop_stream()
+    # stream.close()
+    # p.terminate()
 
-    print('> OUT: recording stopped. finding the song...')
-    print('finding the song...')
+    # print('> OUT: recording stopped. finding the song...')
+    # print('finding the song...')
 
-    # Save the recorded data as a WAV file
-    wf = wave.open(filename, 'wb')
-    wf.setnchannels(channels)
-    wf.setsampwidth(p.get_sample_size(sample_format))
-    wf.setframerate(fs)
-    wf.writeframes(b''.join(frames))
-    wf.close()
+    # # Save the recorded data as a WAV file
+    # wf = wave.open(filename, 'wb')
+    # wf.setnchannels(channels)
+    # wf.setsampwidth(p.get_sample_size(sample_format))
+    # wf.setframerate(fs)
+    # wf.writeframes(b''.join(frames))
+    # wf.close()
 
     # jump to finding_the_song
-    finding_song()
+    finding_the_song()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(finding_song())
+    loop.run_until_complete(finding_the_song())
 
 # Finding song
-async def finding_song():
+# TODO improve the romanization support
+async def finding_the_song():
     shazam = Shazam()
     out = await shazam.recognize_song('find_this_song.mp3')
     result = Serialize.full_track(out)
