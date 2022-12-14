@@ -189,23 +189,39 @@ async def finding_the_song():
     shazam = Shazam()
     out = await shazam.recognize_song('find_this_song.mp3')
     result = Serialize.full_track(out)
-    print(result.track.title)
-    print(result.track.subtitle)
+    print('initial output: ' + result.track.title + result.track.subtitle)
 
     translator = Translator()
-    translated_to_en = translator.translate(result.track.title,  dest='en', src='auto')
-    song_title_romanized = translated_to_en.pronunciation
-    print(translated_to_en.pronunciation)
+    track_title_lang = translator.detect(result.track.title)
+    track_sub_lang = translator.detect(result.track.subtitle)
+    track_title = result.track.title
+    track_sub = result.track.subtitle
+
+    if track_title_lang.lang != 'en':
+        print('1 Track title IS NOT english')
+        print('language: ' + track_title_lang.lang)
+        en_track_title = translator.translate(result.track.title,  dest='en', src='auto')
+        print(en_track_title.pronunciation)
+        track_title = en_track_title.pronunciation
+
+    if track_sub_lang.lang != 'en':
+        print('2 Track subtitle IS NOT english')
+        print('language: ' + track_sub_lang.lang)
+        en_sub_title = translator.translate(result.track.subtitle,  dest='en', src='auto')
+        print(en_sub_title.text)
+        track_sub = en_sub_title.text
+
+    else:
+        print('0 Track title IS english')
+        print(track_title_lang.lang)
 
     # for the text to speech
-    song_title_final = song_title_romanized + " by " + result.track.subtitle
-
+    song_title_final = track_title + " by " + track_sub
     # for the query
     song_title_final_query = result.track.title + " - " + result.track.subtitle
 
     print('The song name is: ' + song_title_final)
     talk('The song name is: ' + song_title_final)
-
     print('Would you like me to play the song?')
     talk('Would you like me to play the song?')
 
