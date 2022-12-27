@@ -184,7 +184,6 @@ def find_song():
     loop.run_until_complete(finding_the_song())
 
 # Finding song
-# TODO improve the romanization support
 async def finding_the_song():
     shazam = Shazam()
     out = await shazam.recognize_song('find_this_song.mp3')
@@ -196,24 +195,28 @@ async def finding_the_song():
     track_sub_lang = translator.detect(result.track.subtitle)
     track_title = result.track.title
     track_sub = result.track.subtitle
-
-    if track_title_lang.lang != 'en':
-        print('1 Track title IS NOT english')
+    # TODO improve the romanization support
+    if result.track.title.isascii() is False:
+        print('1 Track title IS NOT ascii')
         print('language: ' + track_title_lang.lang)
         en_track_title = translator.translate(result.track.title,  dest='en', src='auto')
-        print(en_track_title.pronunciation)
-        track_title = en_track_title.pronunciation
-
-    if track_sub_lang.lang != 'en':
-        print('2 Track subtitle IS NOT english')
-        print('language: ' + track_sub_lang.lang)
-        en_sub_title = translator.translate(result.track.subtitle,  dest='en', src='auto')
-        print(en_sub_title.text)
-        track_sub = en_sub_title.text
+        print(en_track_title.extra_data['origin_pronunciation'] + "\n")
+        track_title = en_track_title.extra_data['origin_pronunciation']
 
     else:
-        print('0 Track title IS english')
-        print(track_title_lang.lang)
+        print('0 Track title IS ascii')
+        print('language: ' + track_title_lang.lang + "\n")
+
+    if result.track.subtitle.isascii() is False:
+        print('2 Track subtitle IS NOT ascii')
+        print('language: ' + track_sub_lang.lang)
+        en_sub_title = translator.translate(result.track.subtitle,  dest='en', src='auto')
+        print(en_sub_title.extra_data['origin_pronunciation'] + "\n")
+        track_sub = en_sub_title.extra_data['origin_pronunciation']
+
+    else:
+        print('0 Subtitle IS ascii')
+        print('language: ' + track_title_lang.lang + "\n")
 
     # for the text to speech
     song_title_final = track_title + " by " + track_sub
