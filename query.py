@@ -189,13 +189,13 @@ async def finding_the_song():
     out = await shazam.recognize_song('find_this_song.mp3')
     result = Serialize.full_track(out)
     print('initial output: ' + result.track.title + result.track.subtitle)
+    track_title = result.track.title
+    track_sub = result.track.subtitle
 
     translator = Translator()
     track_title_lang = translator.detect(result.track.title)
     track_sub_lang = translator.detect(result.track.subtitle)
-    track_title = result.track.title
-    track_sub = result.track.subtitle
-    # TODO improve the romanization support
+
     if result.track.title.isascii() is False:
         print('1 Track title IS NOT ascii')
         print('language: ' + track_title_lang.lang)

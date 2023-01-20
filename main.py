@@ -3,13 +3,6 @@ import query as q
 # q.greeting()
 
 def run_monikAI():
-    # TODO fix the one time greeting each open
-    # first_run = 0
-    # while first_run == 0:
-    #     q.greeting()
-    #     first_run += 1
-    #     if first_run == 1:
-    #         break
 
     command = q.query_input()
     print("> INPUT: " + command + ' \tIN monikAI main.py')
