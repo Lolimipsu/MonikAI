@@ -1,22 +1,27 @@
+# Text-to-speech and speech recognition
 import speech_recognition as sr
 import pyttsx3
+
+# Web requests and parsing
 import requests
-import pywhatkit
 import webbrowser
 import urllib.request
 from bs4 import BeautifulSoup
 
-## finding song
-# shazam requirements
+# Finding song
+# Shazam requirements
 import asyncio
 from shazamio import Shazam, Serialize
 
-# translating the song to romanized version
+# Translating the song to romanized version
 from googletrans import Translator
 
-# recording audio
+# Recording audio
 import pyaudio
 import wave
+
+# Sending messages and playing songs on YouTube
+import pywhatkit
 
 # -----------------------------------------------------------------------
 # definitions
