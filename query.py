@@ -30,7 +30,7 @@ listener = sr.Recognizer()
 
 tts = pyttsx3.init()
 voice = tts.getProperty("voices")
-tts.setProperty("voice", voice[2].id)
+tts.setProperty("voice", voice[1].id)
 # voice speed RATE Can be more than 100
 tts.setProperty("rate", 175)
 tts.setProperty("volume", 0.8)
@@ -66,9 +66,16 @@ def query_input():
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
             command = command.lower()
-            if "monika" in command or "monica" in command:
-                command = command.replace("monika","monica","")
+            if any(name in command for name in ai_name):
+                words = command.split()
+                command = ' '.join(word for word in words if word not in ai_name)
+                command = command.lstrip()
                 print("> INPUT:" + command)
+    # except sr.UnknownValueError:
+    #     print("Sorry, I didn't catch that. Could you please repeat?")
+    #     return query_input()
+    # except sr.RequestError as e:
+    #     print(f"Sorry, there was an error with the speech recognition service: {e}")
     except:
         pass
     return command

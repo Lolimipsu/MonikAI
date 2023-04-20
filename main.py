@@ -5,7 +5,7 @@ import query as q
 # USE DOUBLE QUOTATION (NO '_' only "_")
 weather_prompt = ["weather", "weather today", "today's weather", "weather like today", "weather for today", "weather forecast"]
 play_song_prompt = ["play me a song", "play a song"]
-open_browser_prompt = ["open browser"]
+open_browser_prompt = ["open browser", "open a specific site"]
 find_song_prompt = ["what song is this", "find this song", "name of song", "name of this song"]
 
 
